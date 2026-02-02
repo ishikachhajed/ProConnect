@@ -10,8 +10,14 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: 'https://pro-connect-topaz.vercel.app/' 
+  origin: [
+    "http://localhost:3000",
+    "https://pro-connect-topaz.vercel.app"
+  ],
+  credentials: true
 }));
+
+
 app.use(express.json());
 
 // ✅ expose upload folder
