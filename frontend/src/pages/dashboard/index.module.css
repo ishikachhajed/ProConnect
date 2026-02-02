@@ -1,0 +1,280 @@
+.scrollComponent {
+  padding: 1rem;
+  justify-content: center;
+  flex-direction:column;
+}
+
+/* MAIN BAR */
+.createPostContainer {
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+  border-radius: 12px;
+  padding: 30px 80px;     /* ⬅️ increased */
+  background-color: white;
+  width: 100%;            /* ⬅️ slightly bigger */
+  max-width: 900px;      /* ⬅️ prevents it from being too wide on big screens */
+  height: 100px;           /* ⬅️ increased */
+  background: snow;
+  position:relative;
+}
+
+
+/* PROFILE IMAGE */
+.userProfile {
+  width:fit-content;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* TEXT INPUT */
+.postInput {
+  flex: 1;
+  height: 60px;
+  resize: none;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 8px;
+  outline: none;
+  font-size: 14px;
+  border:1px solid silver;
+}
+
+/* PLUS BUTTON */
+.fab {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.fab svg {
+  width: 29px;
+  height: 29px;
+  color: white;
+}
+
+.uploadButton {
+  position: absolute;
+  right: 70px;   /* ⬅️ move LEFT (increase this number) */
+  bottom: 5px;  /* ⬆️ move UP (increase this number) */
+  background: #007bff;
+  color:white;
+  border-radius: 10px;
+  padding-inline:0.8rem;
+  cursor:pointer;
+  padding-block: 0.6;
+}
+
+.singleCard{
+  width:100%;
+  border-radius:10px 10px 0px 0px;
+  border-bottom:1px solid rgb(179,179,179);
+}
+
+.wrapper{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1.5rem;
+  margin-bottom:2rem;
+  max-width:80%;
+}
+
+.singleCard__profileContainer{
+  display:flex;
+  align-items: flex-start;
+  gap:1.2rem;
+  padding:1.2rem;
+  padding-right: 3.4rem;
+}
+.singleCard__profileContainer>img{
+  width:8%;
+  
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.postUserName {
+  font-weight: bold;     /* ✅ makes name bold */
+  font-size: 14px;
+  color: black;
+}
+
+.postUserUsername {
+  font-size: 12px;
+  color: gray;           /* ✅ makes @username grey */
+}
+
+.singleCard__image{
+  width:100%;
+  padding-top:0.6rem;
+  height:fit-content;
+  overflow:hidden;
+}
+
+.singleCard__image>img{
+  width:100%;
+  height:auto;
+  object-fit:cover;
+  border-radius:20px;
+}
+
+.postUserInfo{
+  width:100%;
+}
+
+.postHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative; 
+}
+
+.trashIcon {
+  position: absolute;     /* ✅ */
+  right: 0;               /* ✅ move to right */
+  top: 0;                 /* ✅ move to top */
+  cursor: pointer;
+
+}
+
+.trashSvg {
+  width: 18px;
+  height: 18px;
+  color: #ff4d4d;
+}
+
+.trashSvg:hover {
+  color: red;
+  transform: scale(1.1);
+}
+
+.optionsContainer {
+  display: flex;
+  gap: 35px;              
+  width: 100%;
+  margin-top: 8px;
+  padding-block:0.6rem;
+}
+
+.singleOption__optionsContainer {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 35px;
+  height: 60px;
+  gap:0.3rem;
+}
+
+.singleOption__optionsContainer > svg {
+  width: 22px;    
+  height: 22px;   
+  color: gray;
+}
+.singleOption__optionsContainer > svg:hover {
+  transform: scale(1.1);
+  color: black;
+}
+
+.commentsSection{
+  width:100vw;
+  height:100vh;
+  position: absolute;
+  top:0;
+  left:0;
+  z-index:2;
+  background: rgb(0,0,0,0.7);
+  overflow:hidden;
+  justify-content: center;
+  display:flex;
+  align-items:center;
+}
+.AllcommentsContainer{
+  width:40vw;
+  height:80vh;
+  background:white;
+  border-radius:10px;
+  position: relative;
+  padding:1.4rem;
+  overflow-y:auto;
+}
+
+.postCommentContainer{
+  position: absolute;
+  bottom:1.2rem;
+  left:1.2rem;
+  width:90%;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  gap:1.2rem;
+}
+
+.postCommentContainer>input{
+  flex:0.9;
+  padding-inline: 1.5rem;
+  padding-block: 1.2rem;
+  border:none;
+  background-color: rgb(228,228,228);
+  border-radius:10px;;
+}
+
+.postCommentContainer>input:focus{
+  border:1px solid silver;
+}
+
+.postCommentButton{
+  padding: 0.8rem 1rem;
+  background: orange;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.postCommentButton:hover{
+  background:darkgoldenrod;
+}
+
+.commentHeader{
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.commentName{
+  font-weight: bold;      /* ✅ bold name */
+  font-size: 14px;
+  color: black;
+}
+
+.commentUsername{
+  font-size: 13px;
+  color: gray;           /* ✅ gray username */
+}
+
+.commentText{
+  margin-top: 4px;
+  font-size: 14px;
+  color: #222;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

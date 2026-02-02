@@ -1,0 +1,140 @@
+.container{
+    padding:1rem;
+    background:transparent;
+}
+
+.backDropContainer {
+  width: 100%;
+  height: 30vh;
+  background-image: url("https://images.pexels.com/photos/35494633/pexels-photo-35494633.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius:20px 20px 0 0;
+  position:relative;
+}
+
+
+.backDropContainer img{
+    width:10em;
+    height:10em;
+    object-fit:cover;
+    border-radius:50%;
+    position:absolute;
+    bottom:-30%;
+    left:8%;
+    text-align:center;
+}
+
+.profileContainer__details{
+    padding-top:0.5rem;
+   
+    border-radius: 0 0 20px 20px;
+    margin-top: 3rem;   /* 👈 THIS fixes the overlap */
+}
+
+.card{
+    display:flex;
+    align-items:center;
+    flex-direction: column;
+    gap:1.4rem;
+}
+.card__profileContainer{
+    display:flex;
+    height:auto;
+    height:3.4rem;
+    object-fit:cover;
+}
+.connectButton{
+  background-color:#1877f2;
+  color:white;
+  border:none;
+  border-radius:50px;   /* makes it circular */
+  padding:6px 16px;
+  font-size:0.8rem;
+  cursor:pointer;
+}
+
+.connectButton:hover{
+  background-color:#0f5dc4;
+}
+
+.connectedButton{
+  background-color:#e0e0e0;
+  color:#333;
+  border:none;
+  border-radius:50px;
+  padding:6px 16px;
+}
+
+.detailsInner{
+  display:flex;
+  gap:1.5rem;
+  align-items:flex-start;
+}
+
+.profileInfo{
+  flex:0.6;
+}
+
+.profileInfo > div:first-child{
+  margin-bottom:0.8rem;
+}
+
+.recentActivity{
+  flex:0.4;
+}
+
+.profileHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  margin-bottom:0.6rem;
+  margin-top:0;
+}
+
+.username{
+  color:grey;
+  margin-top:0.15rem;
+}
+
+.bio{
+  color:#444;
+  margin-top:0.6rem;
+}
+
+.postCard{
+  margin-bottom:1rem;
+}
+
+.postCard .card{
+  flex-direction:row;
+  align-items:flex-start;
+  gap:0.8rem;
+  padding:0.6rem;
+  border:1px solid #eee;
+  border-radius:8px;
+}
+
+.postCard .card__profileContainer img{
+  width:3.4rem;
+  height:3.4rem;
+  object-fit:cover;
+  border-radius:6px;
+}
+
+.postCard .card__body p{
+  margin:0;
+  color:#222;
+}
+
+@media (max-width: 768px){
+  .detailsInner{flex-direction:column}
+  .recentActivity{width:100%}
+}
+
+
+
+
+

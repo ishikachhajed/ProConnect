@@ -1,0 +1,58 @@
+POST http://localhost:9090/api/users/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "username": "johndoe",
+  "email": "johndoe@example.com",
+  "password": "securepassword"
+}
+
+###
+
+POST http://localhost:9090/api/users/login
+Content-Type: application/json
+
+{
+  "email": "johndoe@example.com",
+  "password": "securepassword"
+}
+
+###
+
+POST http://localhost:9090/api/users/get_profile
+Content-Type: application/json
+
+{
+  "token":"2ed9f003f428f4d4b556a358fb5d7b92d68a94d49cd9c2d860d658e28d3065d9"
+}
+
+
+###
+POST http://localhost:9090/api/users/update_profile_data
+Content-Type: application/json
+
+{
+  "token": "2ed9f003f428f4d4b556a358fb5d7b92d68a94d49cd9c2d860d658e28d3065d9",
+  "bio": "Experienced tech leader with a passion for innovation.",
+  "currentPost": "CTO",
+  "pastWork": [
+    {
+      "company": "TechCorp",
+      "position": "Software Engineer",
+      "years": "2018-2020"
+    }
+  ],
+  "education": [
+    {
+      "school": "State University",
+      "degree": "B.Sc. Computer Science",
+      "fieldOfStudy": "Computer Science"
+    }
+  ]
+}
+
+###
+GET http://localhost:9090/api/users/get_profile_data
+Content-Type: application/json
+
