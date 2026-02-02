@@ -12,7 +12,9 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://pro-connect-topaz.vercel.app"
+    "https://pro-connect-topaz.vercel.app",
+    "https://pro-connect-git-main-ishika-chhajeds-projects.vercel.app",
+    "https://pro-connect-97gsaugjt-ishika-chhajeds-projects.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
