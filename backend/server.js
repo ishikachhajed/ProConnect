@@ -14,9 +14,12 @@ app.use(cors({
     "http://localhost:3000",
     "https://pro-connect-topaz.vercel.app"
   ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 
+app.options("*", cors()); // handle preflight requests
 
 app.use(express.json());
 
