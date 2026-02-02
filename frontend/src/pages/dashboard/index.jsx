@@ -1,16 +1,15 @@
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
 
-import { getAllPosts } from "../../config/redux/action/postAction";
 import { getAboutUser, getAllUsers } from "@/config/redux/action/authAction";
 import { setTokenIsThere } from "@/config/redux/reducer/authReducer";
+import { getAllPosts } from "../../config/redux/action/postAction";
 
-import UserLayout from "@/layout/UserLayout";
+import { createPost, deletePost, getAllComments, incrementPostLike, postComment } from "@/config/redux/action/postAction";
 import DashboardLayout from "@/layout/DashboardLayout";
-import React from "react";
+import UserLayout from "@/layout/UserLayout";
 import { useState } from "react";
-import { createPost, deletePost , incrementPostLike, getAllComments, postComment} from "@/config/redux/action/postAction";
 import styles from "./index.module.css";
 
 import { BASE_URL } from "@/config/index.js";
@@ -83,7 +82,7 @@ export default function Dashboard() {
               {authState.user.profilePicture && (
                 <img
                   className={styles.userProfile}
-                  src={`http://localhost:9090${authState.user.profilePicture}`}
+                  src={`BASE_URL${authState.user.profilePicture}`}
                   alt="profile"
                 />
               )}
@@ -137,7 +136,7 @@ export default function Dashboard() {
         {post.userId.profilePicture && (
           <img
             className={styles.postProfileImage}
-            src={`http://localhost:9090${post.userId.profilePicture}`}
+            src={`${BASE_URL}${post.userId.profilePicture}`}
             alt="profile"
           />
         )}

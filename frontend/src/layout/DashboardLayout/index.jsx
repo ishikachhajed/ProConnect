@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import styles from "./index.module.css";
-import { useRouter } from "next/router";
 import { setTokenIsThere } from "@/config/redux/reducer/authReducer";
-import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import styles from "./index.module.css";
 
 // ✅ HEROICONS
 import { HomeIcon } from "@heroicons/react/24/outline";
@@ -100,7 +100,7 @@ function DashboardLayout({ children }) {
                 className={styles.extraContainer__profile}
               >
                 <img
-                  src={`http://localhost:9090${profile.userId.profilePicture}`}
+                  src={`${BASE_URL}${profile.userId.profilePicture}`}
                   alt="profile"
                 />
                 <p>{profile.userId.name}</p>
