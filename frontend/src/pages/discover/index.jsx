@@ -1,6 +1,7 @@
-import { BASE_URL, clientServer } from '@/config'
+import { BASE_URL } from '@/config'
 import DashboardLayout from '@/layout/DashboardLayout'
 import UserLayout from '@/layout/UserLayout'
+import axios from 'axios'
 import { useRouter } from "next/router"
 import styles from "./index.module.css"
 
@@ -40,7 +41,8 @@ export default function DiscoverPage({ users }) {
 }
 
 export async function getServerSideProps() {
-  const res = await clientServer.get("/api/users/get_all_users");
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://proconnect-93x8.onrender.com";
+  const res = await axios.get(`${API_URL}/api/users/get_all_users`);
 
   return {
     props: {

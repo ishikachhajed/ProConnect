@@ -1,8 +1,9 @@
-import { BASE_URL, clientServer } from "@/config";
+import { BASE_URL } from "@/config";
 import { getMyConnectionsRequests, sendConnectionRequest } from "@/config/redux/action/authAction";
 import { getAllPosts } from "@/config/redux/action/postAction";
 import DashboardLayout from "@/layout/DashboardLayout";
 import UserLayout from "@/layout/UserLayout";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -130,7 +131,8 @@ export default function ViewProfilePage({ user }) {
 }
 
 export async function getServerSideProps(context) {
-  const request = await clientServer.get("/api/users/get_profile_based_on_username", {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://proconnect-93x8.onrender.com";
+  const request = await axios.get(`${API_URL}/api/users/get_profile_based_on_username`, {
     params: {
       username: context.query.username,
     },
