@@ -76,7 +76,7 @@ export default function Dashboard() {
               {authState.user.profilePicture && (
                 <img
                   className={styles.userProfile}
-                  src={`BASE_URL${authState.user.profilePicture}`}
+                  src={`${BASE_URL}${authState.user.profilePicture}`}
                   alt="profile"
                 />
               )}
