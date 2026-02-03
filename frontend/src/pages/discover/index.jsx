@@ -1,12 +1,10 @@
-import React from 'react'
-import UserLayout from '@/layout/UserLayout'
+import { BASE_URL, clientServer } from '@/config'
 import DashboardLayout from '@/layout/DashboardLayout'
-import { clientServer } from '@/config'
-import styles from "./index.module.css"
+import UserLayout from '@/layout/UserLayout'
 import { useRouter } from "next/router"
+import styles from "./index.module.css"
 
 export default function DiscoverPage({ users }) {
-  const BASE_URL = process.env.BASE_URL;
   const router = useRouter();
 
   return (

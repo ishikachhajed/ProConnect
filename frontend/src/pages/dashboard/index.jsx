@@ -1,9 +1,9 @@
+import { BASE_URL } from "@/config";
+import { getAboutUser, getAllUsers } from "@/config/redux/action/authAction";
+import { setTokenIsThere } from "@/config/redux/reducer/authReducer";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import { getAboutUser, getAllUsers } from "@/config/redux/action/authAction";
-import { setTokenIsThere } from "@/config/redux/reducer/authReducer";
 import { getAllPosts } from "../../config/redux/action/postAction";
 
 import { createPost, deletePost, getAllComments, incrementPostLike, postComment } from "@/config/redux/action/postAction";
@@ -19,11 +19,6 @@ import { resetPostId, setPostId } from "@/config/redux/reducer/postReducer";
 
 
 export default function Dashboard() {
-
-
-
-
-  const BASE_URL = process.env.BASE_URL;
 
   const router = useRouter();
   const dispatch = useDispatch();
