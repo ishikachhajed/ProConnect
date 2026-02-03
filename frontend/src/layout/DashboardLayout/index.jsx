@@ -1,4 +1,5 @@
 import { setTokenIsThere } from "@/config/redux/reducer/authReducer";
+import { BASE_URL } from "@/config";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
