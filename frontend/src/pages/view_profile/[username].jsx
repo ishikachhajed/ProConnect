@@ -1,5 +1,4 @@
 import { clientServer } from "@/config";
-import { BASE_URL } from "@/config/index.js";
 import { getMyConnectionsRequests, sendConnectionRequest } from "@/config/redux/action/authAction";
 import { getAllPosts } from "@/config/redux/action/postAction";
 import DashboardLayout from "@/layout/DashboardLayout";
@@ -10,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "./index.module.css";
 
 export default function ViewProfilePage({ user }) {
+  const BASE_URL = process.env.BASE_URL;
   const router = useRouter();
   const dispatch = useDispatch();
 

@@ -12,7 +12,6 @@ import UserLayout from "@/layout/UserLayout";
 import { useState } from "react";
 import styles from "./index.module.css";
 
-import { BASE_URL } from "@/config/index.js";
 import { resetPostId, setPostId } from "@/config/redux/reducer/postReducer";
 
 
@@ -24,7 +23,7 @@ export default function Dashboard() {
 
 
 
-
+  const BASE_URL = process.env.BASE_URL;
 
   const router = useRouter();
   const dispatch = useDispatch();
