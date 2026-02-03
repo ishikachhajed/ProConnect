@@ -6,5 +6,5 @@ import axios from "axios";
 const BASE_URL = process.env.BASE_URL;
 
 export const clientServer = axios.create({
-  baseURL: process.env.BASE_URL,
+  baseURL: BASE_URL,
 });
