@@ -9,19 +9,38 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://pro-connect-topaz.vercel.app",
-    "https://pro-connect-git-main-ishika-chhajeds-projects.vercel.app",
-    "https://pro-connect-97gsaugjt-ishika-chhajeds-projects.vercel.app"
-  ],
+// app.use(cors({
+//   origin: [
+//     "http://localhost:3000",
+//     "https://pro-connect-topaz.vercel.app",
+//     "https://pro-connect-git-main-ishika-chhajeds-projects.vercel.app",
+//     "https://pro-connect-97gsaugjt-ishika-chhajeds-projects.vercel.app"
+//   ],
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+//   credentials: true
+// }));
+
+// Configure CORS using environment variable(s).
+// Set FRONTEND_URL or FRONTEND_URLS (comma-separated) in Render env.
+const rawOrigins = process.env.FRONTEND_URLS || process.env.FRONTEND_URL || "";
+const allowedOrigins = rawOrigins.split(",").map(s => s.trim()).filter(Boolean);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // allow non-browser requests like curl (no origin)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.length === 0) return callback(null, true); // allow all if none configured
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('CORS policy: Origin not allowed'), false);
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+  credentials: true,
+};
 
-app.options("*", cors()); // handle preflight requests
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // handle preflight requests
 
 app.use(express.json());
 
