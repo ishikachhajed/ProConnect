@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema({
-  userId: { 
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -12,10 +12,17 @@ const postSchema = new mongoose.Schema({
     required: true,
   },
 
+  // Like count
   likes: {
     type: Number,
     default: 0,
   },
+
+  // Track which users liked this post (prevents duplicate likes)
+  likedBy: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  }],
 
   media: {
     type: String,
@@ -25,7 +32,7 @@ const postSchema = new mongoose.Schema({
   fileType: {
     type: String,
     enum: ["image", "video", "none"],
-    default: "none",   // ✅ FIXED (see issue 2)
+    default: "none",
   },
 
   active: {
