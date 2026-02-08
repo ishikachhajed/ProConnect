@@ -26,7 +26,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Define your post routes here
 //GET http://localhost:9090/api/posts/
 router.route('/').get(activeCheck);
 
