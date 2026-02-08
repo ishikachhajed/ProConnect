@@ -1,10 +1,15 @@
 import User from "../models/user.model.js";
 import Post from "../models/posts.model.js";
+import { createNotification } from "./notification.controller.js";
 
+
+//active check
 export const activeCheck = (req, res) => {
   return res.status(200).json({ message: "API is active" });
 };
 
+
+//createPost
 export const createPost = async (req, res) => {
   try {
     console.log("BODY:", req.body);
@@ -26,8 +31,8 @@ export const createPost = async (req, res) => {
       ? req.file.mimetype.startsWith("image")
         ? "image"
         : req.file.mimetype.startsWith("video")
-        ? "video"
-        : "none"
+          ? "video"
+          : "none"
       : "none";
 
     const post = new Post({
@@ -51,8 +56,7 @@ export const createPost = async (req, res) => {
 };
 
 
-
-
+//getAllPosts
 export const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find()
@@ -69,6 +73,8 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
+
+//deletePost
 export const deletePost = async (req, res) => {
   try {
     const { token, postId } = req.body;
@@ -96,8 +102,10 @@ export const deletePost = async (req, res) => {
   }
 };
 
+
+//getCommentsByPost
 export const get_comments_by_post = async (req, res) => {
-  const { postId } = req.query;   // ✅ read from query, not body
+  const { postId } = req.query;   
 
   try {
     const post = await Post.findById(postId).populate(
@@ -119,7 +127,7 @@ export const get_comments_by_post = async (req, res) => {
   }
 };
 
-
+//deleteCommentOfUser
 export const delete_comment_of_user = async (req, res) => {
   try {
     const { token, postId, commentId } = req.body;
@@ -174,10 +182,19 @@ export const commentPost = async (req, res) => {
 
     post.comments.push({
       userId: user._id,
-      text: commentBody   // ✅ map commentBody → text in DB
+      text: commentBody   
     });
 
     await post.save();
+
+    // Create notification for post owner
+    await createNotification({
+      type: "comment",
+      senderId: user._id,
+      receiverId: post.userId,
+      postId: post._id,
+      message: `${user.name} commented on your post`,
+    });
 
     return res.status(201).json({
       message: "Comment added successfully",
@@ -191,27 +208,60 @@ export const commentPost = async (req, res) => {
 };
 
 
-
-
+// Toggle like/unlike - prevents duplicate likes
 export const increment_likes = async (req, res) => {
-  const { post_id } = req.body;
+  const { post_id, token } = req.body;
 
   try {
+    // Get user from token
+    const user = await User.findOne({ token });
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized - invalid token" });
+    }
+
     const post = await Post.findById(post_id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    post.likes += 1;
+    // Initialize likedBy array if it doesn't exist (for old posts)
+    if (!post.likedBy) {
+      post.likedBy = [];
+    }
+
+    // Check if user already liked this post
+    const alreadyLiked = post.likedBy.includes(user._id.toString());
+
+    if (alreadyLiked) {
+      // Unlike: remove user from likedBy and decrement count
+      post.likedBy = post.likedBy.filter(id => id.toString() !== user._id.toString());
+      post.likes = Math.max(0, post.likes - 1); // Prevent negative likes
+    } else {
+      // Like: add user to likedBy and increment count
+      post.likedBy.push(user._id);
+      post.likes += 1;
+
+      // Create notification for post owner (only on like, not unlike)
+      await createNotification({
+        type: "like",
+        senderId: user._id,
+        receiverId: post.userId,
+        postId: post._id,
+        message: `${user.name} liked your post`,
+      });
+    }
+
     await post.save();
 
     return res.status(200).json({
-      message: "Like incremented",
+      message: alreadyLiked ? "Post unliked" : "Post liked",
       likes: post.likes,
+      liked: !alreadyLiked, // Return whether user now likes the post
     });
   } catch (error) {
-    console.error("INCREMENT LIKES ERROR:", error.message);
-    return res.status(500).json({ message: "Error incrementing likes" });
+    console.error("TOGGLE LIKE ERROR:", error.message);
+    return res.status(500).json({ message: "Error toggling like" });
   }
 };
+
 
