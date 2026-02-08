@@ -27,11 +27,19 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: "/upload/default.png",
     },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
+    deletedAt: {
+        type: Date,
+        default: null,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
     },
-    token:{
+    token: {
         type: String,
         default: '',
     }
