@@ -1,0 +1,160 @@
+.card {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    border-radius: 16px;
+    padding: 24px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon {
+    width: 28px;
+    height: 28px;
+    color: white;
+}
+
+.title h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.viewProfile {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.viewProfile:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Streak Section */
+.streak {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.streakIcon {
+    font-size: 48px;
+    line-height: 1;
+}
+
+.streakInfo {
+    flex: 1;
+}
+
+.streakNumber {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.streakLabel {
+    font-size: 14px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Stats Grid */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.statItem {
+    text-align: center;
+}
+
+.statValue {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.statLabel {
+    font-size: 12px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Loading & Error States */
+.loading,
+.error {
+    padding: 40px;
+    text-align: center;
+}
+
+.loading {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+}
+
+.error {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+.error p {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+}
+
+.profileLink {
+    color: white;
+    text-decoration: underline;
+    font-size: 14px;
+}
+
+.profileLink:hover {
+    text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .streak {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .streakNumber {
+        font-size: 32px;
+    }
+}
