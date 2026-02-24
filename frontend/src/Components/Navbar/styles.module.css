@@ -1,25 +1,75 @@
-.container{
-    padding:1.2rem;
+.container {
+    padding: 1rem 1.5rem;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.navBar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+.navBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.navBarOptionContainer{
-    display:flex;
+.navBar h1 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    cursor: pointer;
 }
 
-.buttonJoin{
-    border-radius:10px;
-    padding-block:0.6rem;
-    padding-inline:1.2rem;
-    color:white;
-    cursor:pointer;
-    background:#CD8987;
-    FONT-WEIGHT:bold;
-    cursor:pointer;
+.navBarOptionContainer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
+/* User greeting text */
+.navBarOptionContainer p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.navBarOptionContainer p:hover {
+    color: var(--accent);
+}
+
+/* Logout and Profile links */
+.navLink {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.navLink:hover {
+    color: var(--accent);
+}
+
+/* Join button */
+.buttonJoin {
+    border-radius: 12px;
+    padding: 0.6rem 1.2rem;
+    background: var(--accent-gradient);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.buttonJoin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+.buttonJoin p {
+    color: white !important;
+    margin: 0;
 }

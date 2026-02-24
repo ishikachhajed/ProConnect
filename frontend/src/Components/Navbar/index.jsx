@@ -1,9 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styles from "./styles.module.css";
-import { useDispatch } from "react-redux";
-import { reset } from "@/config/redux/reducer/authReducer";
+import NotificationBell from "../NotificationBell";
 
 export default function NavBarComponent() {
   const router = useRouter();
@@ -13,13 +12,7 @@ export default function NavBarComponent() {
   return (
     <div className={styles.container}>
       <nav className={styles.navBar}>
-        {/* Logo */}
-        <h1
-          style={{ cursor: "pointer", fontSize: "1.2rem", margin: 0 }}
-          onClick={() => router.push("/")}
-        >
-          ProConnect
-        </h1>
+        <div style={{ flex: 1 }}></div>
 
         <div className={styles.navBarOptionContainer}>
           {/* When logged in */}
@@ -29,39 +22,28 @@ export default function NavBarComponent() {
                 display: "flex",
                 gap: "1rem",
                 alignItems: "center",
+                paddingRight: "300px", // Prevents overlap with right sidebar
               }}
             >
+              <NotificationBell />
+
+              <div style={{ width: '1px', height: '20px', background: '#ccc' }}></div>
+
+              <p
+                onClick={() => router.push("/search")}
+                style={{
+                  fontSize: "0.9rem",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  margin: 0,
+                  color: "var(--text-primary, #333)",
+                }}
+              >
+                Find New Projects
+              </p>
+              <div style={{ width: '1px', height: '20px', background: '#ccc' }}></div>
               <p style={{ fontSize: "0.9rem", margin: 0 }}>
                 Hey, {authState.user?.name}
-              </p>
-
-              <p
-                style={{
-                  fontSize: "0.9rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                  margin: 0,
-                }}
-                
-              >
-                Profile
-              </p>
-
-              <p
-              onClick={()=>{
-                localStorage.removeItem("token")
-                router.push("/login")
-                dispatch(reset())
-              }}
-                style={{
-                  fontSize: "0.9rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                  margin: 0,
-                }}
-              
-              >
-                Logout
               </p>
             </div>
           )}
@@ -76,7 +58,7 @@ export default function NavBarComponent() {
             </div>
           )}
         </div>
-      </nav>
-    </div>
+      </nav >
+    </div >
   );
 }
