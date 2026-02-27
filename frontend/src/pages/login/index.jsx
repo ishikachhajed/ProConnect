@@ -1,196 +1,163 @@
-import React, { useEffect, useState } from "react";
-import UserLayout from "@/layout/UserLayout";
-import styles from "./style.module.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { registerUser, loginUser } from "@/config/redux/action/authAction";
-import { reset , emptyMessage } from "@/config/redux/reducer/authReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "@/config/redux/action/authAction";
+import { emptyMessage, reset } from "@/config/redux/reducer/authReducer";
+import Link from "next/link";
+import ThemeToggle from "@/Components/ThemeToggle";
+import styles from "./login.module.css";
 
-function LoginComponent() {
-  const authState = useSelector((state) => state.auth);
+export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const authState = useSelector((state) => state.auth);
 
-  const [isLoginMethod, setIsLoginMethod] = useState(false);
-
-  const [email, setEmailAddress] = useState("");
+  // Form state
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
+  const [errors, setErrors] = useState({});
 
+  // Redirect if already logged in
   useEffect(() => {
     if (authState.loggedIn) {
-      router.push("/dashboard");
+      router.replace("/dashboard");
     }
   }, [authState.loggedIn, router]);
 
+  // Clear messages when component mounts
   useEffect(() => {
-  if (authState.loggedIn) {
-    router.push("/dashboard");
-  }
-}, [authState.loggedIn, router]);
+    dispatch(emptyMessage());
 
+    // Clear form if coming from account deletion
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('deleted') === 'true') {
+      setEmail('');
+      setPassword('');
+      // Remove the param from URL
+      window.history.replaceState({}, '', '/login');
+    }
+  }, [dispatch]);
 
+  // Validate form
+  const validateForm = () => {
+    const newErrors = {};
 
-//   useEffect(() => {
-//   // After successful registration → switch to Sign In
-//   if (authState.isSuccess && !authState.loggedIn) {
-//     setIsLoginMethod(true);
-//     setUsername("");
-//     setName("");
-//     setEmailAddress("");
-//     setPassword("");
-//   }
-// }, [authState.isSuccess, authState.loggedIn]);
+    if (!email.trim()) {
+      newErrors.email = "Email or username is required";
+    }
 
+    if (!password) {
+      newErrors.password = "Password is required";
+    }
 
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-useEffect(() => {
-  dispatch(emptyMessage());
-}, [isLoginMethod]);
+  // Handle login
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
+    if (!validateForm()) return;
 
-
-  const handleRegister = () => {
-  if (!username || !name || !email || !password) {
-    alert("Please fill all fields");
-    return;
-  }
-
-  dispatch(registerUser({ username, name, email, password }));
-};
-
-
-  const handleLogin = () => {
-    console.log("Login...");
     dispatch(loginUser({ email, password }));
   };
 
   return (
-    <UserLayout>
-      <div className={styles.container}>
-        <div className={styles.cardContainer}>
-          <div className={styles.cardContainer__left}>
-            <p className={styles.cardLeft_heading}>
-              {isLoginMethod ? "Sign In" : "Sign Up"}
-            </p>
+    <div className={styles.container}>
+      {/* Theme toggle */}
+      <div className={styles.themeToggleWrapper}>
+        <ThemeToggle />
+      </div>
 
+      {/* Background decoration */}
+      <div className={styles.bgDecoration}>
+        <div className={styles.circle1}></div>
+        <div className={styles.circle2}></div>
+      </div>
+
+      <div className={styles.loginWrapper}>
+        {/* Left side - Form */}
+        <div className={styles.formSection}>
+          <div className={styles.formCard}>
+            <h1 className={styles.logo}>
+              Pro<span>Connect</span>
+            </h1>
+
+            <h2 className={styles.formTitle}>Welcome Back</h2>
+            <p className={styles.formSubtitle}>Sign in to continue to your network</p>
+
+            {/* API messages */}
             {authState.message && (
-              <p style={{ color: authState.isError ? "red" : "green" }}>
+              <div className={`${styles.alert} ${authState.isError ? styles.error : styles.success}`}>
                 {authState.message}
-              </p>
+              </div>
             )}
 
-            <form autoComplete="off" className={styles.inputContainers}>
-              {/* Username & Name only for Sign Up */}
-              {!isLoginMethod && (
-                <div className={styles.inputRow}>
-                  <input
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className={styles.inputfield}
-                    type="text"
-                    name="username"
-                    autoComplete="new-username"
-                    placeholder="Username"
-                  />
-
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className={styles.inputfield}
-                    type="text"
-                    name="name"
-                    autoComplete="off"
-                    placeholder="Name"
-                  />
-                </div>
-              )}
-
-              {/* Email */}
-              <input
-                value={email}
-                onChange={(e) => setEmailAddress(e.target.value)}
-                className={styles.inputfield}
-                type="email"
-                name="email"
-                autoComplete="new-email"
-                placeholder="Email"
-              />
-
-              {/* Password */}
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={styles.inputfield}
-                type="password"
-                name="password"
-                autoComplete="new-password"
-                placeholder="Password"
-              />
-
-              {/* Button */}
-              <div
-                onClick={() => {
-                  if (authState.isLoading) return;
-
-                  if (isLoginMethod) {
-                    // LOGIN validation
-                    if (!email || !password) {
-                      alert("Please enter email and password");
-                      return;
-                    }
-                    handleLogin();
-                  } else {
-                    // REGISTER validation
-                    if (!username || !name || !email || !password) {
-                      alert("All fields are required");
-                      return;
-                    }
-                    handleRegister();
-                  }
-                }}
-
-                className={styles.buttonWithOutline}
-              >
-                <p>{isLoginMethod ? "Sign In" : "Sign Up"}</p>
+            <form onSubmit={handleLogin} className={styles.form}>
+              {/* Email/Username */}
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Email or Username</label>
+                <input
+                  type="text"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
+                />
+                {errors.email && <span className={styles.errorText}>{errors.email}</span>}
               </div>
 
-              {/* Toggle */}
-              <p
-                style={{ cursor: "pointer", marginTop: "12px" }}
-                onClick={() => {
-                  setIsLoginMethod(!isLoginMethod);
-                  setUsername("");
-                  setName("");
-                  setEmailAddress("");
-                  setPassword("");
-                  dispatch(reset()); 
-                }}
+              {/* Password */}
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
+                />
+                {errors.password && <span className={styles.errorText}>{errors.password}</span>}
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className={styles.submitBtn}
+                disabled={authState.isLoading}
               >
-                {isLoginMethod
-                  ? "Don't have an account? Sign Up"
-                  : "Already have an account? Sign In"}
+                {authState.isLoading ? "Signing In..." : "Sign In"}
+              </button>
+
+              {/* Register Link */}
+              <p className={styles.registerLink}>
+                Don't have an account? <Link href="/register">Create one</Link>
               </p>
             </form>
           </div>
+        </div>
 
-          <div className={styles.cardContainer__right}>
-           
-              {isLoginMethod ? <p>Don't Have An Account!</p> : <p>Already Have an Account!</p>}
-                  
-                  <div onClick ={()=>{
-                    setIsLoginMethod(!isLoginMethod);
-                  }} style={{color:"black", textAlign:"center"}} className={styles.buttonWithOutline}>
-                    <p>{isLoginMethod ? "Sign Up" : "Sign In"}</p>
-                  </div>
-                  </div>
-        
-          
+        {/* Right side - Illustration */}
+        <div className={styles.illustrationSection}>
+          <div className={styles.illustrationContent}>
+            <div className={styles.floatingCards}>
+              <div className={styles.floatingCard + " " + styles.card1}>
+                <div className={styles.cardIcon}>👋</div>
+                <p>Connect with professionals</p>
+              </div>
+              <div className={styles.floatingCard + " " + styles.card2}>
+                <div className={styles.cardIcon}>💼</div>
+                <p>Share your expertise</p>
+              </div>
+              <div className={styles.floatingCard + " " + styles.card3}>
+                <div className={styles.cardIcon}>🌟</div>
+                <p>Grow your network</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </UserLayout>
+    </div>
   );
 }
-
-export default LoginComponent;

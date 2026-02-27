@@ -4,6 +4,13 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import postRoutes from './routes/posts.routes.js';
 import userRoutes from './routes/user.routes.js';
+import profileRoutes from './routes/profile.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
+import leetcodeRoutes from './routes/leetcode.routes.js';
+import { setupCleanupJobs } from './jobs/cleanupDeletedAccounts.js';
+
+import dns from "node:dns/promises";
+dns.setServers(["1.1.1.1"]);
 
 dotenv.config();
 
@@ -44,20 +51,28 @@ app.options("*", cors(corsOptions)); // handle preflight requests
 
 app.use(express.json());
 
-// ✅ expose upload folder
 app.use("/upload", express.static("upload"));
 
 app.get("/", (req, res) => {
   res.send("Backend is working ");
 });
 
+// Routes
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/profile', profileRoutes);
+console.log(" profile.routes.js LOADED");
+app.use('/api/notifications', notificationRoutes);
+console.log("notification.routes.js LOADED");
+app.use('/api/leetcode', leetcodeRoutes);
+
+// Start cleanup cron job
+setupCleanupJobs();
 
 const start = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("MongoDB connected successfully 🚀");
+    console.log("MongoDB connected successfully ");
 
     const PORT = process.env.PORT || 9090;
     app.listen(PORT, () => {

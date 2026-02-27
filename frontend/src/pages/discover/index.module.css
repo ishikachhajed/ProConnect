@@ -1,30 +1,142 @@
-.allUserProfile{
-    max-width:80%;
-    align-items:center;
-    display:flex;
-    flex-direction:column;
-    gap:1.2rem;
+.container {
+    padding: 24px;
+    animation: fadeIn 0.5s ease;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
 
-
-.userProfile{
-    display:flex;
-    gap:1.2rem;
-    cursor:pointer;
-    padding:1.3rem;
-    align-items:center;
-    box-shadow:10px 10px 10px 0px rgb(0,0,0,0.1)
+    to {
+        opacity: 1;
+    }
 }
 
-.userCard__image{
-    width:10%;
-    border-radius:50%;
-    
-    
-
+.pageTitle {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 24px;
 }
-.userInfo{
+
+/* ===== USER GRID ===== */
+.allUserProfile {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* ===== USER CARD ===== */
+.userProfile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.userProfile:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow);
+    border-color: var(--accent);
+}
+
+.userCard__image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent);
+}
+
+.userInfo {
     display: flex;
     flex-direction: column;
+    gap: 4px;
+}
+
+.userInfo h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.userInfo p {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* ===== ERROR DISPLAY ===== */
+.errorBox {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    color: #ef4444;
+}
+
+.errorBox strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.errorBox pre {
+    white-space: pre-wrap;
+    font-size: 13px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
+
+    .allUserProfile {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== CONNECT BUTTON ===== */
+.connectBtn {
+    padding: 8px 20px;
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    margin-left: auto;
+    position: relative;
+    z-index: 2;
+}
+
+.connectBtn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.connectBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.9;
+}
+
+.connectBtn.connected {
+    background: var(--bg-tertiary);
+    color: var(--success);
+    border: 2px solid var(--success);
+}
+
+/* Ensure card has relative positioning for button z-index */
+.userProfile {
+    position: relative;
 }

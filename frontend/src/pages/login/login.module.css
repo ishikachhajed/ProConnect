@@ -1,0 +1,324 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Theme toggle position */
+.themeToggleWrapper {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 100;
+}
+
+/* Background decorations */
+.bgDecoration {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.circle1,
+.circle2 {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.35;
+}
+
+.circle1 {
+    width: 700px;
+    height: 700px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    top: -300px;
+    left: -200px;
+}
+
+.circle2 {
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(135deg, #ec4899, #f43f5e);
+    bottom: -200px;
+    right: -100px;
+}
+
+/* Login wrapper */
+.loginWrapper {
+    display: flex;
+    width: 100%;
+    max-width: 1000px;
+    min-height: 600px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--glass-shadow);
+    overflow: hidden;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form section */
+.formSection {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.formCard {
+    width: 100%;
+    max-width: 380px;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 32px;
+}
+
+.logo span {
+    opacity: 0.9;
+}
+
+.formTitle {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.formSubtitle {
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+}
+
+/* Alert messages */
+.alert {
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Form styles */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.input {
+    width: 100%;
+    padding: 16px 20px;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    border-radius: 14px;
+    color: var(--text-primary);
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.input::placeholder {
+    color: var(--text-muted);
+}
+
+.inputError {
+    border-color: #ef4444;
+}
+
+.errorText {
+    font-size: 12px;
+    color: #ef4444;
+}
+
+/* Submit button */
+.submitBtn {
+    width: 100%;
+    padding: 18px;
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    margin-top: 8px;
+}
+
+.submitBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Register link */
+.registerLink {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.registerLink a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.registerLink a:hover {
+    color: var(--accent-light);
+}
+
+/* Illustration section */
+.illustrationSection {
+    flex: 1;
+    background: var(--accent-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.illustrationSection::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.illustrationContent {
+    position: relative;
+    z-index: 1;
+}
+
+/* Floating cards animation */
+.floatingCards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 40px;
+}
+
+.floatingCard {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 20px 28px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: white;
+    animation: float 6s ease-in-out infinite;
+}
+
+.card1 {
+    animation-delay: 0s;
+    transform: translateX(-20px);
+}
+
+.card2 {
+    animation-delay: 2s;
+    transform: translateX(20px);
+}
+
+.card3 {
+    animation-delay: 4s;
+    transform: translateX(-10px);
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.cardIcon {
+    font-size: 1.5rem;
+}
+
+.floatingCard p {
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .loginWrapper {
+        flex-direction: column;
+        max-width: 440px;
+    }
+
+    .illustrationSection {
+        display: none;
+    }
+
+    .formSection {
+        padding: 40px 30px;
+    }
+}

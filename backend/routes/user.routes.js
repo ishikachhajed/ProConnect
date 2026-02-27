@@ -12,12 +12,22 @@ import {
   whatAreMyConnections,
   acceptConnectionRequest,
   getAllUserProfile,
-  getUserProfileAndUserBasedOnUsername
-  
-
+  getUserProfileAndUserBasedOnUsername,
+  changePassword,
+  searchUsers,
+  deleteAccount,
+  softDeleteAccount,
+  recoverAccount,
 } from "../controllers/user.controller.js";
 
 import multer from "multer";
+import {
+  validateRequest,
+  registerValidation,
+  loginValidation,
+  updateProfileValidation,
+  changePasswordValidation,
+} from "../middlewares/validation.middleware.js";
 
 const router = Router();
 console.log("✅ user.routes.js LOADED");
@@ -36,14 +46,20 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // -------- USER ROUTES --------
-router.post("/register", register);
-router.post("/login", login);
+router.post("/register", registerValidation, validateRequest, register);
+router.post("/login", loginValidation, validateRequest, login);
 router.post("/update_profile", updateUserProfile);
 router.post("/get_profile", getUserProfile);
 
-router.post("/update_profile_data", updateProfileData);
+router.post("/update_profile_data", updateProfileValidation, validateRequest, updateProfileData);
+router.post("/change_password", changePasswordValidation, validateRequest, changePassword);
 
 router.get("/get_all_users", getAllUserProfile);
+router.get("/search", searchUsers); // New aggregation route
+
+router.post("/delete_account", deleteAccount); // Old immediate delete (deprecated)
+router.post("/soft_delete_account", softDeleteAccount); // Soft delete with 30-day recovery
+router.post("/recover_account", recoverAccount); // Recover deleted account
 
 router.get("/download_resume", downloadProfile);
 router.get("/send_connection_request", sendConnectionRequest);
