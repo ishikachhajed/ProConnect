@@ -114,23 +114,59 @@ export const getMyConnectionsRequests = createAsyncThunk(
 
 
 export const sendConnectionRequest = createAsyncThunk(
-  "user/sendConnectionRequest",
-  async (data, thunkAPI) => {
-    try {
-      const response = await clientServer.get(
-        "/api/users/send_connection_request",
-        {
-          params: {
-            token: data.token,
-            connectionId: data.connectionId,
-          },
+    "user/sendConnectionRequest",
+    async (data, thunkAPI) => {
+        try {
+            const response = await clientServer.get(
+                "/api/users/send_connection_request",
+                {
+                    params: {
+                        token: data.token,
+                        connectionId: data.connectionId,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response?.data);
         }
-      );
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data);
     }
-  }
+);
+
+export const whatAreMyConnections = createAsyncThunk(
+    "user/whatAreMyConnections",
+    async (data, thunkAPI) => {
+        try {
+            const response = await clientServer.get("/api/users/whatAreMyConnections", {
+                params: { token: data.token },
+            });
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message || "Failed to fetch connections"
+            );
+        }
+    }
+);
+
+export const acceptConnectionRequest = createAsyncThunk(
+    "user/acceptConnectionRequest",
+    async (data, thunkAPI) => {
+        try {
+            const response = await clientServer.get("/api/users/acceptConnectionRequest", {
+                params: {
+                    token: data.token,
+                    requestId: data.requestId,
+                    action_type: data.action_type,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message || "Failed to update connection request"
+            );
+        }
+    }
 );
 
 
