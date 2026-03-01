@@ -354,7 +354,7 @@ export default function ViewProfilePage({ user }) {
                 )}
 
                 {/* LeetCode Profile Section */}
-                {user?.leetcodeUsername && (
+                {user?.leetcodeUsername && (user.leetcodeVisibility === 'public' || isOwnProfile) && (
                   <div style={{ marginBottom: '24px' }}>
                     <LeetCodeCard username={user.leetcodeUsername} />
                   </div>

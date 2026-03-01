@@ -8,6 +8,7 @@ import {
 } from "@/config/redux/action/authAction";
 import { setTokenIsThere } from "@/config/redux/reducer/authReducer";
 import { BASE_URL } from "@/config";
+import { getProfileImageUrl } from "@/utils/profileImage";
 import DashboardLayout from "@/layout/DashboardLayout";
 import UserLayout from "@/layout/UserLayout";
 import styles from "./connections.module.css";
@@ -121,7 +122,8 @@ export default function MyConnectionsPage() {
                       return (
                         <div key={connection._id} className={styles.userCard}>
                           <img
-                            src={`${BASE_URL}${otherUser.profilePicture || "/upload/default.png"}`}
+                            src={getProfileImageUrl(otherUser.profilePicture)}
+                            onError={(e) => { e.target.src = '/default-avatar.png'; }}
                             alt={otherUser.name}
                             className={styles.userAvatar}
                             onClick={() => goToProfile(otherUser.username)}
@@ -170,7 +172,8 @@ export default function MyConnectionsPage() {
                       return (
                         <div key={request._id} className={styles.userCard}>
                           <img
-                            src={`${BASE_URL}${otherUser.profilePicture || "/upload/default.png"}`}
+                            src={getProfileImageUrl(otherUser.profilePicture)}
+                            onError={(e) => { e.target.src = '/default-avatar.png'; }}
                             alt={otherUser.name}
                             className={styles.userAvatar}
                             onClick={() => goToProfile(otherUser.username)}

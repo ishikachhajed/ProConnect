@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/config";
+import { getProfileImageUrl } from "@/utils/profileImage";
 import { getAboutUser, getAllUsers } from "@/config/redux/action/authAction";
 import { setTokenIsThere } from "@/config/redux/reducer/authReducer";
 import { useRouter } from "next/router";
@@ -73,13 +74,12 @@ export default function Dashboard() {
           {authState.user ? (
             <div className={styles.createPostContainer}>
               {/* PROFILE IMAGE */}
-              {authState.user.profilePicture && (
-                <img
-                  className={styles.userProfile}
-                  src={`${BASE_URL}${authState.user.profilePicture}`}
-                  alt="profile"
-                />
-              )}
+              <img
+                className={styles.userProfile}
+                src={getProfileImageUrl(authState.user.profilePicture)}
+                alt="profile"
+                onError={(e) => { e.target.src = '/default-avatar.png'; }}
+              />
 
               {/* TEXTAREA */}
             <textarea
@@ -127,13 +127,12 @@ export default function Dashboard() {
   {postState.posts.map((post) => (
     <div key={post._id} className={styles.singleCard}>
       <div className={styles.singleCard__profileContainer}>
-        {post.userId.profilePicture && (
-          <img
-            className={styles.postProfileImage}
-            src={`${BASE_URL}${post.userId.profilePicture}`}
-            alt="profile"
-          />
-        )}
+        <img
+          className={styles.postProfileImage}
+          src={getProfileImageUrl(post.userId.profilePicture)}
+          alt="profile"
+          onError={(e) => { e.target.src = '/default-avatar.png'; }}
+        />
 
         <div className={styles.postUserInfo}>
           <div className={styles.postHeaderRow}>

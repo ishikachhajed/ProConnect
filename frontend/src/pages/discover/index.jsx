@@ -1,4 +1,5 @@
 import { BASE_URL } from '@/config'
+import { getProfileImageUrl } from "@/utils/profileImage";
 import DashboardLayout from '@/layout/DashboardLayout'
 import UserLayout from '@/layout/UserLayout'
 import { getAboutUser, getMyConnectionsRequests, sendConnectionRequest, whatAreMyConnections } from '@/config/redux/action/authAction'
@@ -129,8 +130,9 @@ export default function DiscoverPage({ users, error }) {
                   {/* Profile image */}
                   <img
                     className={styles.userCard__image}
-                    src={`${BASE_URL}${user.userId?.profilePicture}`}
+                    src={getProfileImageUrl(user.userId?.profilePicture)}
                     alt="profile"
+                    onError={(e) => { e.target.src = '/default-avatar.png'; }}
                   />
 
                   {/* User info */}
