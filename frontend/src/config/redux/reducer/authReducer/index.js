@@ -22,7 +22,7 @@ const initialState = {
     isTokenThere: false,
     profileFetched: false,
     connections: [],
-    connectionsRequests: [],
+    connectionRequests: [],
     allUsers: [],
     all_profiles_fetching: false,
 };
@@ -117,7 +117,7 @@ const authSlice = createSlice({
             })
             /* ---------------- CONNECTIONS ---------------- */
             .addCase(getMyConnectionsRequests.fulfilled, (state, action) => {
-                state.connectionsRequests = action.payload.connections;
+                state.connectionRequests = action.payload.connections;
             })
             .addCase(whatAreMyConnections.fulfilled, (state, action) => {
                 state.connections = action.payload.connections;

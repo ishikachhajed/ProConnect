@@ -1,7 +1,7 @@
 import { BASE_URL } from '@/config'
 import DashboardLayout from '@/layout/DashboardLayout'
 import UserLayout from '@/layout/UserLayout'
-import { sendConnectionRequest, whatAreMyConnections } from '@/config/redux/action/authAction'
+import { getAboutUser, getMyConnectionsRequests, sendConnectionRequest, whatAreMyConnections } from '@/config/redux/action/authAction'
 import axios from 'axios'
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
@@ -22,20 +22,44 @@ export default function DiscoverPage({ users, error }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
+      dispatch(getAboutUser({ token }));
       dispatch(whatAreMyConnections({ token }));
+      dispatch(getMyConnectionsRequests({ token }));
     }
   }, [dispatch]);
 
-  // Check if user is already connected
-  const isConnected = (userId) => {
-    // Check in Redux connections state
+  // Get connection status for a user
+  const getConnectionStatus = (targetId) => {
+    if (!targetId) return 'none';
+
+    const myId = authState.user?._id;
+
+    // 1. Check in Redux connections state
     if (authState.connections && authState.connections.length > 0) {
-      return authState.connections.some(
-        (conn) => conn.connectionId?._id === userId
-      );
+      const isConnected = authState.connections.some((conn) => {
+        // Find the user on the other side of the connection
+        const otherId = String(conn.userId?._id) === String(myId)
+          ? String(conn.connectionId?._id)
+          : String(conn.userId?._id);
+        return otherId === String(targetId);
+      });
+      if (isConnected) return 'connected';
     }
-    // Also check local state for newly sent requests
-    return connectionStatus[userId] === 'connected' || connectionStatus[userId] === 'pending';
+
+    // 2. Check in Redux connectionRequests state (pending)
+    if (authState.connectionRequests && authState.connectionRequests.length > 0) {
+      const isPending = authState.connectionRequests.some((req) => {
+        // Find the user on the other side of the request
+        const otherId = String(req.userId?._id) === String(myId)
+          ? String(req.connectionId?._id)
+          : String(req.userId?._id);
+        return otherId === String(targetId);
+      });
+      if (isPending) return 'pending';
+    }
+
+    // 3. Also check local state for newly sent requests
+    return connectionStatus[targetId] || 'none';
   };
 
   // Handle connect button click
@@ -89,11 +113,12 @@ export default function DiscoverPage({ users, error }) {
           <h1 className={styles.pageTitle}>Discover People</h1>
 
           <div className={styles.allUserProfile}>
-            {users.map((user) => {
-              const userId = user.userId?._id;
-              const connected = isConnected(userId);
-              const isPending = connectionStatus[userId] === 'pending';
-              const isLoading = loadingId === userId;
+            {users
+              .filter((u) => u.userId?._id !== authState.user?._id)
+              .map((user) => {
+                const userId = user.userId?._id;
+                const status = getConnectionStatus(userId);
+                const isLoading = loadingId === userId;
 
               return (
                 <div
@@ -116,15 +141,15 @@ export default function DiscoverPage({ users, error }) {
 
                   {/* Connect button - uses stopPropagation */}
                   <button
-                    className={`${styles.connectBtn} ${connected ? styles.connected : ''}`}
+                    className={`${styles.connectBtn} ${status !== 'none' ? styles.connected : ''}`}
                     onClick={(e) => handleConnect(e, userId)}
-                    disabled={connected || isLoading}
+                    disabled={status !== 'none' || isLoading}
                   >
                     {isLoading ? (
                       "Sending..."
-                    ) : connected ? (
+                    ) : status === 'connected' ? (
                       "Connected"
-                    ) : isPending ? (
+                    ) : status === 'pending' ? (
                       "Pending"
                     ) : (
                       "Connect"

@@ -537,8 +537,12 @@ export const getMyConnectionsRequests = async (req, res) => {
       return res.status(404).json({ message: "Invalid token" });
     }
 
-    const connections = await ConnectionRequest.find({ connectionId: user._id })
-      .populate("userId", "name username email profilePicture");
+    const connections = await ConnectionRequest.find({
+      $or: [{ userId: user._id }, { connectionId: user._id }],
+      status_accepted: false
+    })
+      .populate("userId", "name username email profilePicture")
+      .populate("connectionId", "name username email profilePicture");
 
     return res.json({ connections });
 
@@ -558,9 +562,13 @@ export const whatAreMyConnections = async (req, res) => {
     }
 
     const connections = await ConnectionRequest.find({
-      userId: user._id,
-      status_accepted: true
-    }).populate("connectionId", "name username email profilePicture");
+      $or: [
+        { userId: user._id, status_accepted: true },
+        { connectionId: user._id, status_accepted: true }
+      ]
+    })
+      .populate("userId", "name username email profilePicture")
+      .populate("connectionId", "name username email profilePicture");
 
     return res.json({ connections });
 
@@ -593,11 +601,10 @@ export const acceptConnectionRequest = async (req, res) => {
         receiverId: connectionRequest.userId,
         message: `${user.name} accepted your connection request`,
       });
+      await connectionRequest.save();
     } else {
-      connectionRequest.status_accepted = false;
+      await ConnectionRequest.findByIdAndDelete(requestId);
     }
-
-    await connectionRequest.save();
 
     return res.json({ message: "Connection Request Updated Successfully" });
 

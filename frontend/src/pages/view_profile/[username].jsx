@@ -1,5 +1,5 @@
 import { BASE_URL } from "@/config";
-import { getMyConnectionsRequests, sendConnectionRequest, whatAreMyConnections } from "@/config/redux/action/authAction";
+import { getAboutUser, getMyConnectionsRequests, sendConnectionRequest, whatAreMyConnections } from "@/config/redux/action/authAction";
 import { getAllPosts } from "@/config/redux/action/postAction";
 import DashboardLayout from "@/layout/DashboardLayout";
 import UserLayout from "@/layout/UserLayout";
@@ -54,6 +54,7 @@ export default function ViewProfilePage({ user }) {
     const token = localStorage.getItem("token");
     await dispatch(getAllPosts());
     if (token) {
+      await dispatch(getAboutUser({ token }));
       await dispatch(whatAreMyConnections({ token }));
       await dispatch(getMyConnectionsRequests({ token }));
     }
@@ -75,22 +76,33 @@ export default function ViewProfilePage({ user }) {
 
   // Check connection status
   useEffect(() => {
-    if (!user?.userId?._id || isOwnProfile) return;
+    const targetId = user?.userId?._id;
+    if (!targetId || isOwnProfile) return;
 
+    const myId = authState.user?._id;
+
+    // 1. Check in Redux connections state
     if (authState.connections?.length > 0) {
-      const isConnected = authState.connections.some(
-        (conn) => conn.connectionId?._id === user.userId._id
-      );
+      const isConnected = authState.connections.some((conn) => {
+        const otherId = String(conn.userId?._id) === String(myId)
+          ? String(conn.connectionId?._id)
+          : String(conn.userId?._id);
+        return otherId === String(targetId);
+      });
       if (isConnected) {
         setConnectionStatus("connected");
         return;
       }
     }
 
+    // 2. Check in Redux connectionRequests state (pending)
     if (authState.connectionRequests?.length > 0) {
-      const isPending = authState.connectionRequests.some(
-        (req) => req.userId?._id === user.userId._id || req.connectionId?._id === user.userId._id
-      );
+      const isPending = authState.connectionRequests.some((req) => {
+        const otherId = String(req.userId?._id) === String(myId)
+          ? String(req.connectionId?._id)
+          : String(req.userId?._id);
+        return otherId === String(targetId);
+      });
       if (isPending) {
         setConnectionStatus("pending");
         return;
@@ -98,7 +110,7 @@ export default function ViewProfilePage({ user }) {
     }
 
     setConnectionStatus("none");
-  }, [authState.connections, authState.connectionRequests, user?.userId?._id, isOwnProfile]);
+  }, [authState.connections, authState.connectionRequests, authState.user?._id, user?.userId?._id, isOwnProfile]);
 
   // Handle connect button
   const handleConnect = async () => {

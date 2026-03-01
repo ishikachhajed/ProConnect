@@ -111,33 +111,41 @@ export default function MyConnectionsPage() {
                   </div>
                 ) : (
                   <div className={styles.userGrid}>
-                    {connections.map((connection) => (
-                      <div key={connection._id} className={styles.userCard}>
-                        <img
-                          src={`${BASE_URL}${connection.connectionId?.profilePicture || "/upload/default.png"}`}
-                          alt={connection.connectionId?.name}
-                          className={styles.userAvatar}
-                          onClick={() => goToProfile(connection.connectionId?.username)}
-                        />
-                        <div className={styles.userInfo}>
-                          <h4
-                            className={styles.userName}
-                            onClick={() => goToProfile(connection.connectionId?.username)}
-                          >
-                            {connection.connectionId?.name}
-                          </h4>
-                          <p className={styles.userUsername}>@{connection.connectionId?.username}</p>
+                    {connections.map((connection) => {
+                      const otherUser = connection.userId?._id === authState.user?._id
+                        ? connection.connectionId
+                        : connection.userId;
+
+                      if (!otherUser) return null;
+
+                      return (
+                        <div key={connection._id} className={styles.userCard}>
+                          <img
+                            src={`${BASE_URL}${otherUser.profilePicture || "/upload/default.png"}`}
+                            alt={otherUser.name}
+                            className={styles.userAvatar}
+                            onClick={() => goToProfile(otherUser.username)}
+                          />
+                          <div className={styles.userInfo}>
+                            <h4
+                              className={styles.userName}
+                              onClick={() => goToProfile(otherUser.username)}
+                            >
+                              {otherUser.name}
+                            </h4>
+                            <p className={styles.userUsername}>@{otherUser.username}</p>
+                          </div>
+                          <div className={styles.cardActions}>
+                            <button
+                              className={styles.viewBtn}
+                              onClick={() => goToProfile(otherUser.username)}
+                            >
+                              View Profile
+                            </button>
+                          </div>
                         </div>
-                        <div className={styles.cardActions}>
-                          <button
-                            className={styles.viewBtn}
-                            onClick={() => goToProfile(connection.connectionId?.username)}
-                          >
-                            View Profile
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </>
@@ -153,39 +161,58 @@ export default function MyConnectionsPage() {
                   </div>
                 ) : (
                   <div className={styles.userGrid}>
-                    {requests.map((request) => (
-                      <div key={request._id} className={styles.userCard}>
-                        <img
-                          src={`${BASE_URL}${request.userId?.profilePicture || "/upload/default.png"}`}
-                          alt={request.userId?.name}
-                          className={styles.userAvatar}
-                          onClick={() => goToProfile(request.userId?.username)}
-                        />
-                        <div className={styles.userInfo}>
-                          <h4
-                            className={styles.userName}
-                            onClick={() => goToProfile(request.userId?.username)}
-                          >
-                            {request.userId?.name}
-                          </h4>
-                          <p className={styles.userUsername}>@{request.userId?.username}</p>
+                    {requests.map((request) => {
+                      const isOutgoing = request.userId?._id === authState.user?._id;
+                      const otherUser = isOutgoing ? request.connectionId : request.userId;
+
+                      if (!otherUser) return null;
+
+                      return (
+                        <div key={request._id} className={styles.userCard}>
+                          <img
+                            src={`${BASE_URL}${otherUser.profilePicture || "/upload/default.png"}`}
+                            alt={otherUser.name}
+                            className={styles.userAvatar}
+                            onClick={() => goToProfile(otherUser.username)}
+                          />
+                          <div className={styles.userInfo}>
+                            <h4
+                              className={styles.userName}
+                              onClick={() => goToProfile(otherUser.username)}
+                            >
+                              {otherUser.name}
+                            </h4>
+                            <p className={styles.userUsername}>@{otherUser.username}</p>
+                            {isOutgoing && <span className={styles.outgoingBadge}>Sent Request</span>}
+                          </div>
+                          <div className={styles.requestActions}>
+                            {!isOutgoing ? (
+                              <>
+                                <button
+                                  className={styles.acceptBtn}
+                                  onClick={() => handleConnectionAction(request._id, "accept")}
+                                >
+                                  Accept
+                                </button>
+                                <button
+                                  className={styles.rejectBtn}
+                                  onClick={() => handleConnectionAction(request._id, "reject")}
+                                >
+                                  Ignore
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                className={styles.rejectBtn}
+                                onClick={() => handleConnectionAction(request._id, "reject")}
+                              >
+                                Cancel Request
+                              </button>
+                            )}
+                          </div>
                         </div>
-                        <div className={styles.requestActions}>
-                          <button
-                            className={styles.acceptBtn}
-                            onClick={() => handleConnectionAction(request._id, "accept")}
-                          >
-                            Accept
-                          </button>
-                          <button
-                            className={styles.rejectBtn}
-                            onClick={() => handleConnectionAction(request._id, "reject")}
-                          >
-                            Ignore
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </>
