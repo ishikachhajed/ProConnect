@@ -8,7 +8,7 @@
 // extraReducers update state
 
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, registerUser, getAboutUser, getAllUsers, getMyConnectionsRequests, whatAreMyConnections, sendConnectionRequest, acceptConnectionRequest } from "../../action/authAction";
+import { loginUser, registerUser, getAboutUser, getAllUsers, getMyConnectionsRequests, whatAreMyConnections, sendConnectionRequest, acceptConnectionRequest, uploadProfilePicture } from "../../action/authAction";
 
 
 const initialState = {
@@ -21,6 +21,7 @@ const initialState = {
     message: "",
     isTokenThere: false,
     profileFetched: false,
+    profile: null,
     connections: [],
     connectionRequests: [],
     allUsers: [],
@@ -103,7 +104,8 @@ const authSlice = createSlice({
                 state.message = action.payload;
             })
             .addCase(getAboutUser.fulfilled, (state, action) => {
-                state.user = action.payload.profile.userId;   // user info      // full profile
+                state.user = action.payload.profile.userId;   // user info
+                state.profile = action.payload.profile;      // full profile
                 state.isLoading = false;
                 state.profileFetched = true;
                 state.isError = false;
@@ -127,6 +129,14 @@ const authSlice = createSlice({
             })
             .addCase(acceptConnectionRequest.fulfilled, (state, action) => {
                 state.message = action.payload.message;
+            })
+            /* ---------------- UPLOAD PROFILE PICTURE ---------------- */
+            .addCase(uploadProfilePicture.fulfilled, (state, action) => {
+                // Update user's profilePicture in Redux state immediately
+                // so sidebar and all components that read authState.user.profilePicture refresh
+                if (state.user) {
+                    state.user.profilePicture = action.payload.imageUrl;
+                }
             });
     },
 });

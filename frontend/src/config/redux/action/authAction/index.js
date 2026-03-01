@@ -38,12 +38,29 @@ export const registerUser = createAsyncThunk(
   "user/register",
   async (user, thunkAPI) => {
     try {
-      const response = await clientServer.post("/api/users/register", {
-        username: user.username,
-        email: user.email,
-        password: user.password,
-        name: user.name,
-      });
+      let response;
+
+      if (user.profilePicture) {
+        // Send as multipart/form-data so the image file reaches multer
+        const formData = new FormData();
+        formData.append("name", user.name);
+        formData.append("username", user.username);
+        formData.append("email", user.email);
+        formData.append("password", user.password);
+        formData.append("profile_picture", user.profilePicture);
+
+        response = await clientServer.post("/api/users/register", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        // No image — send as plain JSON
+        response = await clientServer.post("/api/users/register", {
+          name: user.name,
+          username: user.username,
+          email: user.email,
+          password: user.password,
+        });
+      }
 
       if (response.data?.message) {
         return response.data.message;
@@ -53,6 +70,25 @@ export const registerUser = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Registration failed"
+      );
+    }
+  }
+);
+/* ---------------- UPLOAD PROFILE PICTURE ---------------- */
+export const uploadProfilePicture = createAsyncThunk(
+  "user/uploadProfilePicture",
+  async ({ file, token }, thunkAPI) => {
+    try {
+      const formData = new FormData();
+      formData.append("profile_picture", file);
+      formData.append("token", token);
+      const response = await clientServer.post("/api/users/upload_profile_picture", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data; // { message, imageUrl }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Upload failed"
       );
     }
   }
