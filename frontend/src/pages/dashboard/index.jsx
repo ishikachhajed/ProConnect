@@ -286,6 +286,7 @@ export default function Dashboard() {
             );
             setCommentText("");
             dispatch(getAllComments({ postId: postState.postId }));
+            dispatch(getAllPosts());
           }}
           className={styles.postCommentButton}
         >
