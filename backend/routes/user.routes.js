@@ -20,7 +20,7 @@ import {
   recoverAccount,
 } from "../controllers/user.controller.js";
 
-import multer from "multer";
+import upload from "../middlewares/upload.js";
 import {
   validateRequest,
   registerValidation,
@@ -32,21 +32,7 @@ import {
 const router = Router();
 console.log("✅ user.routes.js LOADED");
 
-
-// MULTER SETUP
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "upload/");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname);
-  },
-});
-const upload = multer({ storage });
-
-// -------- USER ROUTES --------
-router.post("/register", registerValidation, validateRequest, register);
+router.post("/register", upload.single("profile_picture"), registerValidation, validateRequest, register);
 router.post("/login", loginValidation, validateRequest, login);
 router.post("/update_profile", updateUserProfile);
 router.post("/get_profile", getUserProfile);

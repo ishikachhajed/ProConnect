@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAboutUser } from '@/config/redux/action/authAction';
 import DashboardLayout from '@/layout/DashboardLayout';
 import UserLayout from '@/layout/UserLayout';
 import { clientServer } from '@/config';
@@ -8,6 +9,7 @@ import styles from './settings.module.css';
 
 export default function SettingsPage() {
     const router = useRouter();
+    const dispatch = useDispatch();
     const authState = useSelector((state) => state.auth);
 
     // User state
@@ -27,7 +29,13 @@ export default function SettingsPage() {
     const [deleteError, setDeleteError] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
 
-    // Load user data from Redux
+    // LeetCode state
+    const [leetcodeUsername, setLeetCodeUsername] = useState('');
+    const [leetcodeVisibility, setLeetCodeVisibility] = useState('private');
+    const [leetcodeMessage, setLeetCodeMessage] = useState('');
+    const [leetcodeLoading, setLeetCodeLoading] = useState(false);
+
+    // Load user and profile data
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -35,13 +43,20 @@ export default function SettingsPage() {
             return;
         }
 
+        if (!authState.profileFetched && !authState.isLoading) {
+            dispatch(getAboutUser({ token }));
+        }
+
         if (authState.user) {
             setUser(authState.user);
             setLoading(false);
-        } else {
-            setLoading(false);
         }
-    }, [authState.user, router]);
+        
+        if (authState.profile) {
+            setLeetCodeUsername(authState.profile.leetcodeUsername || '');
+            setLeetCodeVisibility(authState.profile.leetcodeVisibility || 'private');
+        }
+    }, [authState.user, authState.profile, router]);
 
     // Handle Change Password
     const handleChangePassword = async (e) => {
@@ -73,7 +88,7 @@ export default function SettingsPage() {
                 newPassword,
             });
 
-            setPasswordMessage('âœ… Password changed successfully!');
+            setPasswordMessage('✅ Password changed successfully!');
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
@@ -81,6 +96,29 @@ export default function SettingsPage() {
             setPasswordMessage(error.response?.data?.message || 'Error changing password');
         } finally {
             setPasswordLoading(false);
+        }
+    };
+
+    // Handle Save LeetCode Settings
+    const handleSaveLeetCode = async (e) => {
+        e.preventDefault();
+        setLeetCodeMessage('');
+        setLeetCodeLoading(true);
+
+        const token = localStorage.getItem('token');
+
+        try {
+            await clientServer.post('/api/profile/update', {
+                token,
+                leetcodeUsername,
+                leetcodeVisibility,
+            });
+
+            setLeetCodeMessage('✅ LeetCode settings updated!');
+        } catch (error) {
+            setLeetCodeMessage(error.response?.data?.message || 'Error updating LeetCode settings');
+        } finally {
+            setLeetCodeLoading(false);
         }
     };
 
@@ -198,7 +236,7 @@ export default function SettingsPage() {
                                 />
                             </div>
                             {passwordMessage && (
-                                <div className={passwordMessage.includes('âœ…') ? styles.successMessage : styles.errorMessage}>
+                                <div className={passwordMessage.includes('✅') ? styles.successMessage : styles.errorMessage}>
                                     {passwordMessage}
                                 </div>
                             )}
@@ -208,6 +246,46 @@ export default function SettingsPage() {
                                 disabled={passwordLoading}
                             >
                                 {passwordLoading ? 'Changing...' : 'Change Password'}
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* LeetCode Integration */}
+                    <div className={styles.section}>
+                        <h2>LeetCode Integration</h2>
+                        <form onSubmit={handleSaveLeetCode} className={styles.passwordForm}>
+                            <div className={styles.inputGroup}>
+                                <label>LeetCode Username</label>
+                                <input
+                                    type="text"
+                                    value={leetcodeUsername}
+                                    onChange={(e) => setLeetCodeUsername(e.target.value)}
+                                    placeholder="Enter LeetCode username"
+                                    className={styles.input}
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label>Profile Visibility</label>
+                                <select
+                                    value={leetcodeVisibility}
+                                    onChange={(e) => setLeetCodeVisibility(e.target.value)}
+                                    className={styles.input}
+                                >
+                                    <option value="private">Private (Hidden from others)</option>
+                                    <option value="public">Public (Visible on your profile)</option>
+                                </select>
+                            </div>
+                            {leetcodeMessage && (
+                                <div className={leetcodeMessage.includes('✅') ? styles.successMessage : styles.errorMessage}>
+                                    {leetcodeMessage}
+                                </div>
+                            )}
+                            <button
+                                type="submit"
+                                className={styles.submitBtn}
+                                disabled={leetcodeLoading}
+                            >
+                                {leetcodeLoading ? 'Saving...' : 'Save LeetCode Settings'}
                             </button>
                         </form>
                     </div>

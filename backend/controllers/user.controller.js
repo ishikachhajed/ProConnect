@@ -158,12 +158,9 @@ export const register = async (req, res) => {
     });
 
     if (existingUser) {
-      // Check if account is soft-deleted
       if (existingUser.isDeleted) {
         const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-
         if (existingUser.deletedAt > thirtyDaysAgo) {
-          // Account is in recovery period
           if (existingUser.email === email) {
             return res.status(409).json({
               message: "This email is associated with a deleted account. Please log in to recover it, or wait 30 days to register again."
@@ -176,11 +173,37 @@ export const register = async (req, res) => {
           }
         }
       } else {
-        // Active account
         if (existingUser.email === email) {
           return res.status(409).json({ message: "Email already registered" });
         }
         return res.status(409).json({ message: "Username already taken" });
+      }
+    }
+
+    // Upload profile picture to Cloudinary if provided
+    let profilePictureUrl = "";
+    if (req.file) {
+      try {
+        const { default: cloudinary } = await import('../config/cloudinary.js');
+        const uploadResult = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "profile_pictures",
+              transformation: [{ width: 500, height: 500, crop: "limit" }],
+              resource_type: "image",
+            },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            }
+          );
+          stream.end(req.file.buffer);
+        });
+        profilePictureUrl = uploadResult.secure_url;
+        console.log(`[Register] Uploaded profile picture for ${username}: ${profilePictureUrl}`);
+      } catch (uploadError) {
+        console.warn("[Register] Cloudinary upload failed, using default:", uploadError.message);
+        profilePictureUrl = "";
       }
     }
 
@@ -193,7 +216,9 @@ export const register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      profilePicture: "/upload/default.png"
+      // Only set profilePicture if we have a Cloudinary URL.
+      // If empty, MongoDB schema default applies (empty string → getProfileImageUrl shows default avatar).
+      ...(profilePictureUrl ? { profilePicture: profilePictureUrl } : {}),
     });
 
     await newUser.save();
@@ -323,22 +348,64 @@ export const uploadProfilePicture = async (req, res) => {
     }
 
     if (!req.file) {
-      return res.status(400).json({ message: "Image file missing" });
+      return res.status(400).json({ message: "Image file is required" });
     }
 
-    // Cloudinary URL
-    user.profilePicture = `/upload/${req.file.filename}`;
+    // Validate mime type
+    if (!req.file.mimetype.startsWith("image/")) {
+      return res.status(400).json({ message: "Only image files are allowed" });
+    }
 
+    // Import cloudinary config
+    const { default: cloudinary } = await import('../config/cloudinary.js');
+
+    // If user already has a Cloudinary image, delete the old one
+    if (user.profilePicture && user.profilePicture.includes("cloudinary.com")) {
+      try {
+        // Extract public_id from the URL (everything between /upload/ and the file extension)
+        const urlParts = user.profilePicture.split("/");
+        const uploadIndex = urlParts.indexOf("upload");
+        if (uploadIndex !== -1 && uploadIndex + 2 < urlParts.length) {
+          // Handles versioned URLs: /upload/v123456/folder/public_id.ext
+          const publicIdWithExt = urlParts.slice(uploadIndex + 2).join("/");
+          const publicId = publicIdWithExt.replace(/\.[^/.]+$/, ""); // strip extension
+          await cloudinary.uploader.destroy(publicId);
+          console.log(`[Cloudinary] Deleted old image: ${publicId}`);
+        }
+      } catch (deleteErr) {
+        // Don't fail the request if old image deletion fails
+        console.warn("[Cloudinary] Failed to delete old image:", deleteErr.message);
+      }
+    }
+
+    // Upload new image to Cloudinary using upload_stream + buffer from memoryStorage
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "profile_pictures",
+          transformation: [{ width: 500, height: 500, crop: "limit" }],
+          resource_type: "image",
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    // Save the Cloudinary secure_url to the user record
+    user.profilePicture = uploadResult.secure_url;
     await user.save();
 
     return res.json({
       message: "Profile picture uploaded successfully",
-      imageUrl: req.file.path,
+      imageUrl: uploadResult.secure_url,
     });
 
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Upload failed" });
+    console.error("UPLOAD PROFILE PICTURE ERROR:", error);
+    return res.status(500).json({ message: "Upload failed", detail: error.message });
   }
 };
 

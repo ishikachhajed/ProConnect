@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DashboardLayout from "@/layout/DashboardLayout";
 import UserLayout from "@/layout/UserLayout";
 import { clientServer } from "@/config";
+import { uploadProfilePicture } from "@/config/redux/action/authAction";
 import styles from "./profile_edit.module.css";
 
 export default function ProfileEditPage() {
@@ -54,6 +55,15 @@ export default function ProfileEditPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
 
+    // Profile picture state
+    const [profilePicPreview, setProfilePicPreview] = useState(null);
+    const [profilePicFile, setProfilePicFile] = useState(null);
+    const [profilePicLoading, setProfilePicLoading] = useState(false);
+    const [profilePicMessage, setProfilePicMessage] = useState("");
+
+    // Current profile picture from Redux auth state
+    const currentProfilePic = authState?.user?.profilePicture;
+
     // Load existing profile data
     useEffect(() => {
         const fetchProfile = async () => {
@@ -95,6 +105,41 @@ export default function ProfileEditPage() {
 
         fetchProfile();
     }, [router]);
+
+    // Handle profile picture file selection (show preview only)
+    const handleProfilePicChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setProfilePicFile(file);
+        setProfilePicPreview(URL.createObjectURL(file));
+        setProfilePicMessage("");
+    };
+
+    // Handle profile picture upload to Cloudinary via Redux thunk (updates sidebar instantly)
+    const handleUploadProfilePicture = async () => {
+        if (!profilePicFile) {
+            setProfilePicMessage("Please select an image first.");
+            return;
+        }
+        const token = localStorage.getItem("token");
+        setProfilePicLoading(true);
+        setProfilePicMessage("");
+        try {
+            const result = await dispatch(uploadProfilePicture({ file: profilePicFile, token }));
+            if (uploadProfilePicture.fulfilled.match(result)) {
+                setProfilePicPreview(result.payload.imageUrl);
+                setProfilePicFile(null);
+                setProfilePicMessage("✅ Profile picture updated!");
+            } else {
+                setProfilePicMessage(`❌ ${result.payload || "Upload failed"}`);
+            }
+        } catch (error) {
+            setProfilePicMessage("❌ Upload failed. Please try again.");
+            console.error("Profile picture upload error:", error);
+        } finally {
+            setProfilePicLoading(false);
+        }
+    };
 
     // Handle standard profile update
     const handleUpdateProfile = async () => {
@@ -292,6 +337,75 @@ export default function ProfileEditPage() {
                             {message}
                         </div>
                     )}
+
+                    {/* ===== PROFILE PICTURE UPLOAD ===== */}
+                    <div className={styles.section}>
+                        <h3>📷 Profile Picture</h3>
+
+                        {/* Circular avatar preview */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '16px' }}>
+                            <img
+                                src={
+                                    profilePicPreview ||
+                                    (currentProfilePic && currentProfilePic.startsWith("http")
+                                        ? currentProfilePic
+                                        : "/default-avatar.png")
+                                }
+                                alt="Profile Preview"
+                                style={{
+                                    width: '90px',
+                                    height: '90px',
+                                    borderRadius: '50%',
+                                    objectFit: 'cover',
+                                    border: '3px solid var(--accent)',
+                                    background: 'var(--bg-secondary)'
+                                }}
+                                onError={(e) => { e.target.src = "/default-avatar.png"; }}
+                            />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {/* Hidden file input — triggered by the label button */}
+                                <input
+                                    id="profilePicInput"
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handleProfilePicChange}
+                                />
+                                <label
+                                    htmlFor="profilePicInput"
+                                    className={styles.miniSaveButton}
+                                    style={{ cursor: 'pointer', display: 'inline-block', textAlign: 'center' }}
+                                >
+                                    {profilePicFile ? "Change Image" : "Select Image"}
+                                </label>
+                                {profilePicFile && (
+                                    <button
+                                        className={styles.saveButton}
+                                        onClick={handleUploadProfilePicture}
+                                        disabled={profilePicLoading}
+                                        style={{ padding: '8px 16px' }}
+                                    >
+                                        {profilePicLoading ? "Uploading..." : "Upload"}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {profilePicMessage && (
+                            <div
+                                className={
+                                    profilePicMessage.startsWith("✅")
+                                        ? styles.message
+                                        : styles.errorMessage
+                                }
+                            >
+                                {profilePicMessage}
+                            </div>
+                        )}
+                        <p style={{ fontSize: '0.82em', opacity: 0.6, marginTop: '6px' }}>
+                            Accepted formats: JPG, PNG, JPEG · Max size: 5MB
+                        </p>
+                    </div>
 
                     {/* Header Background Selector */}
                     <div className={styles.section}>

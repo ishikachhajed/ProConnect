@@ -4,7 +4,7 @@ import User from "../models/user.model.js";
 // Update profile (bio, learning, skills, featuredProject)
 export const updateProfile = async (req, res) => {
     try {
-        const { token, bio, learning, leetcodeUsername, currentPost } = req.body;
+        const { token, bio, learning, leetcodeUsername, leetcodeVisibility, currentPost } = req.body;
 
         // Get user from token
         const user = await User.findOne({ token });
@@ -22,6 +22,7 @@ export const updateProfile = async (req, res) => {
         if (bio !== undefined) profile.bio = bio;
         if (learning !== undefined) profile.learning = learning;
         if (leetcodeUsername !== undefined) profile.leetcodeUsername = leetcodeUsername;
+        if (leetcodeVisibility !== undefined) profile.leetcodeVisibility = leetcodeVisibility;
         if (currentPost !== undefined) profile.currentPost = currentPost;
 
         await profile.save();

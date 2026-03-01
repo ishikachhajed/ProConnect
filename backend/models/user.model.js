@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
-        default: "/upload/default.png",
+        default: "",   // empty = getProfileImageUrl() will show /default-avatar.png
     },
     isDeleted: {
         type: Boolean,

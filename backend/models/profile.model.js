@@ -115,6 +115,19 @@ const profileSchema = new mongoose.Schema({
         default: '',
         trim: true,
     },
+    leetcodeVisibility: {
+        type: String,
+        enum: ['public', 'private'],
+        default: 'private',
+    },
+    leetcodeStats: {
+        type: Object,
+        default: null,
+    },
+    leetcodeLastUpdated: {
+        type: Date,
+        default: null,
+    },
     // Projects array
     projects: {
         type: [{
