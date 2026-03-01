@@ -1,5 +1,6 @@
 import { setTokenIsThere, setTokenIsNotThere, reset } from "@/config/redux/reducer/authReducer";
 import { BASE_URL } from "@/config";
+import { getProfileImageUrl } from "@/utils/profileImage";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -172,9 +173,10 @@ function DashboardLayout({ children }) {
               style={{ cursor: 'pointer' }}
             >
               <img
-                src={`${BASE_URL}${authState.user.profilePicture}`}
+                src={getProfileImageUrl(authState.user.profilePicture)}
                 alt="profile"
                 className={styles.userAvatar}
+                onError={(e) => { e.target.src = '/default-avatar.png'; }}
               />
               <div className={styles.userInfo}>
                 <p className={styles.userName}>{authState.user.name}</p>
@@ -212,9 +214,10 @@ function DashboardLayout({ children }) {
                 onClick={() => router.push(`/view_profile/${profile.userId?.username}`)}
               >
                 <img
-                  src={`${BASE_URL}${profile.userId?.profilePicture}`}
+                  src={getProfileImageUrl(profile.userId?.profilePicture)}
                   alt="profile"
                   className={styles.profileAvatar}
+                  onError={(e) => { e.target.src = '/default-avatar.png'; }}
                 />
                 <div className={styles.profileInfo}>
                   <p className={styles.profileName}>{profile.userId?.name}</p>
