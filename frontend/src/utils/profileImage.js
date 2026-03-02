@@ -1,7 +1,7 @@
 import { BASE_URL } from "@/config";
 
 export function getProfileImageUrl(profilePicture) {
-    // Handle null, undefined, empty, "undefined", "null"
+    // Handle null / undefined / empty
     if (
         !profilePicture ||
         profilePicture === "undefined" ||
@@ -11,14 +11,16 @@ export function getProfileImageUrl(profilePicture) {
         return "/default-avatar.png";
     }
 
-    // Absolute URL (Cloudinary)
-    if (
-        profilePicture.startsWith("http://") ||
-        profilePicture.startsWith("https://")
-    ) {
+    // Cloudinary or any full external URL
+    if (profilePicture.startsWith("http")) {
         return profilePicture;
     }
 
-    // Local legacy upload path
-    return `${BASE_URL}${profilePicture}`;
+    // Backend uploaded images
+    if (profilePicture.startsWith("/upload")) {
+        return `${BASE_URL}${profilePicture}`;
+    }
+
+    // Frontend public images (like default-avatar.png)
+    return profilePicture;
 }
