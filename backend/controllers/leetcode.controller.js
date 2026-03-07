@@ -119,6 +119,7 @@ async function fetchViaLeetcodeStatsApi(username) {
         currentStreak,
         maxStreak,
         submissionCalendar,
+        calendarGrid: formatCalendarByMonth(submissionCalendar),
         profileUrl: `https://leetcode.com/u/${username}`,
         lastUpdated: new Date(),
     };
@@ -147,6 +148,7 @@ async function fetchViaAlfa(username) {
         currentStreak,
         maxStreak,
         submissionCalendar,
+        calendarGrid: formatCalendarByMonth(submissionCalendar),
         profileUrl: `https://leetcode.com/u/${username}`,
         lastUpdated: new Date(),
     };
@@ -198,6 +200,7 @@ async function fetchViaGraphQL(username) {
         currentStreak,
         maxStreak,
         submissionCalendar,
+        calendarGrid: formatCalendarByMonth(submissionCalendar),
         profileUrl: `https://leetcode.com/u/${username}`,
         lastUpdated: new Date(),
     };
