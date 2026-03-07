@@ -54,6 +54,49 @@ function calculateStreaks(submissionCalendar) {
     return { currentStreak, maxStreak };
 }
 
+function formatCalendarByMonth(submissionCalendar) {
+    let parsed = {};
+    try {
+        parsed = typeof submissionCalendar === 'string'
+            ? JSON.parse(submissionCalendar)
+            : (submissionCalendar || {});
+    } catch { return []; }
+
+    const activeDates = {};
+    for (const [ts, count] of Object.entries(parsed)) {
+        const dateStr = new Date(Number(ts) * 1000).toISOString().slice(0, 10);
+        activeDates[dateStr] = count;
+    }
+
+    const result = {};
+    const today = new Date();
+
+    for (let i = 365; i >= 0; i--) {
+        const d = new Date();
+        d.setUTCDate(today.getUTCDate() - i);
+        
+        const dateStr = d.toISOString().slice(0, 10);
+        const monthName = d.toLocaleString('default', { month: 'short', timeZone: 'UTC' });
+        const year = d.getUTCFullYear();
+        const monthKey = `${monthName} ${year}`; 
+
+        if (!result[monthKey]) result[monthKey] = [];
+
+        result[monthKey].push({
+            date: dateStr,
+            count: activeDates[dateStr] || 0
+        });
+    }
+
+    return Object.keys(result).map(monthKey => ({
+        month: monthKey,
+        days: result[monthKey]
+    }));
+}
+
+
+
+
 // ── API Source 1: leetcode-stats-api (Heroku-hosted, stable) ─────────────────
 // Returns: totalSolved, easySolved, mediumSolved, hardSolved, submissionCalendar etc.
 async function fetchViaLeetcodeStatsApi(username) {
